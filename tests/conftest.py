@@ -1,3 +1,4 @@
+import sys
 
 import pytest
 
@@ -18,7 +19,10 @@ def _reset_floating_alias_warnings():
     """`parse_model_id` suppresses the floating-alias warning after first fire per
     snapshot (process-level state). Tests that rely on the warning need a clean slate."""
 
-    from big_finance_harness.models import base as base_module
+    base_module = sys.modules.get("big_finance_harness.models.base")
+    if base_module is None:
+        yield
+        return
 
     base_module._WARNED_FLOATING_ALIASES.clear()
     yield

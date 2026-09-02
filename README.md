@@ -25,7 +25,7 @@ or email `alexwang@rogo.ai`.
 |---|---|
 | `big_finance_harness/` | Python package: ReAct agent, tools, judge, types |
 | `scripts/` | Orchestrator (eval + grade), analysis, plotting |
-| `tests/` | Test suite (51 tests, no network deps) |
+| `tests/` | Test suite (53 tests, no network deps) |
 | `data/` | Public 50-item subset (`big_finance_subset.jsonl`) + datasheet |
 | `grades/` | Public grading outputs from Gemini 3.1 Pro, Claude Opus 4.7, and GPT-5.5 |
 | `human_workpapers/` | Two illustrative workbooks from independent human validation |
@@ -53,10 +53,18 @@ Requires Python ≥ 3.11.
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -e .              # core eval + grade
-.venv/bin/pip install -e ".[analysis]"  # add pandas + matplotlib for build_plots.py
-.venv/bin/pip install -e ".[dev]"       # add pytest + ruff for development
+.venv/bin/pip install -e .                 # tool package only
+.venv/bin/pip install -e ".[eval]"         # evaluation + grading harness
+.venv/bin/pip install -e ".[full]"         # evaluation, grading, and analysis
+.venv/bin/pip install -e ".[analysis]"     # add pandas + matplotlib only
+.venv/bin/pip install -e ".[eval,dev]"     # full test suite + ruff
 ```
+
+The base install intentionally contains only the dependencies required to import and
+run `big_finance_harness.tools`. Model/provider integrations (including LiteLLM and
+Google Vertex packages) live in the `eval` extra so the tools can be embedded in
+dependency-constrained agent environments such as NVIDIA NeMo/Gym without pulling in
+an unrelated provider stack.
 
 Set environment variables for the providers you intend to call (you only need keys
 for the providers you use):
